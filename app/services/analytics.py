@@ -135,6 +135,67 @@ class Analytics:
             'valores': [float(r.valor) for r in resultados],
             'quantidades': [int(r.quantidade) for r in resultados]
         }
+
+    def correlacao_vendas_cotacao(self, data_inicio=None, data_fim=None, moeda="USD"):
+        """
+        Calcula a correlação entre a quantidade de vendas e a cotação da moeda
+        no período especificado.
+
+        Args:
+            data_inicio (datetime, opcional): Data inicial do período.
+            data_fim (datetime, opcional): Data final do período.
+
+        Returns:
+            dict:
+                - correlacao (float): Coeficiente de correlação entre vendas e dólar.
+                - dados (list[dict]): Lista com data, quantidade de vendas e cotação do dólar.
+        """
+        # 1. Agregar vendas por dia
+        query_vendas = (
+            db.session.query(
+                func.date(Venda.data).label("data"),
+                func.sum(Venda.quantidade).label("qtd_vendas")
+            )
+        )
+
+        query_vendas = self._aplicar_filtro_data(query_vendas, Venda, data_inicio, data_fim)
+        query_vendas = query_vendas.group_by(func.date(Venda.data))
+        vendas_por_dia = query_vendas.all()
+
+        # 2. Buscar cotação da moeda por dia
+        query_moeda = (
+            db.session.query(
+                func.date(Cotacao.data_hora).label("data"),
+                func.avg(Cotacao.valor).label("cotacao")
+            )
+            .filter(Cotacao.moeda == moeda)
+        )
+        query_moeda = self._aplicar_filtro_data(query_moeda, Cotacao, data_inicio, data_fim)
+        query_moeda = query_moeda.group_by(func.date(Cotacao.data))
+        cotacoes_por_dia = query_moeda.all()
+
+        # 3. Converter para DataFrame
+        df_vendas = pd.DataFrame(vendas_por_dia, columns=["data", "qtd_vendas"])
+        df_cotacao = pd.DataFrame(cotacoes_por_dia, columns=["data", "cotacao"])
+
+        # 4. Juntar e calcular correlação
+        df = pd.merge(df_vendas, df_cotacao, on="data")
+        correlacao = df["qtd_vendas"].corr(df["cotacao"]) if not df.empty else None
+
+        # 5. Retornar resultado no mesmo padrão de saída
+        return {
+            "moeda": moeda,
+            "correlacao": float(round(correlacao, 3)) if correlacao is not None else None,
+            "dados": [
+                {
+                    "data": row.data.strftime("%Y-%m-%d"),
+                    "qtd_vendas": int(row.qtd_vendas),
+                    "cotacao": float(row.cotacao)
+                }
+                for row in df.itertuples()
+            ]
+        }
+
     
     def _aplicar_filtro_data(self, query, model, data_inicio=None, data_fim=None):
         """Aplica filtros de data na query."""
@@ -153,4 +214,3 @@ class Analytics:
                 pass
         
         return query
-

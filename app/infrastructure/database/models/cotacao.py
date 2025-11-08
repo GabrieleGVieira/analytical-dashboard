@@ -18,13 +18,3 @@ class Cotacao(db.Model):
     
     def __repr__(self):
         return f'<Cotacao {self.moeda}: R$ {self.valor}>'
-    
-    def to_dict(self):
-        """Serializa para dicionário."""
-        return {
-            'id': self.id,
-            'moeda': self.moeda,
-            'valor': self.valor,
-            'data_hora': self.data_hora.isoformat() if self.data_hora else None
-        }
-

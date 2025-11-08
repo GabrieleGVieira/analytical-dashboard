@@ -19,14 +19,3 @@ class Custo(db.Model):
     
     def __repr__(self):
         return f'<Custo {self.produto}: R$ {self.custo_unitario}>'
-    
-    def to_dict(self):
-        """Serializa para dicionário."""
-        return {
-            'id': self.id,
-            'produto': self.produto,
-            'categoria': self.categoria,
-            'custo_unitario': self.custo_unitario,
-            'data_atualizacao': self.data_atualizacao.isoformat() if self.data_atualizacao else None
-        }
-

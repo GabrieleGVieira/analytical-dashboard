@@ -23,19 +23,3 @@ class Venda(db.Model):
     
     def __repr__(self):
         return f'<Venda {self.id}: {self.produto} - R$ {self.valor_total}>'
-    
-    def to_dict(self):
-        """Serializa para dicionário."""
-        return {
-            'id': self.id,
-            'data': self.data.isoformat() if self.data else None,
-            'produto': self.produto,
-            'categoria': self.categoria,
-            'quantidade': self.quantidade,
-            'preco_unitario': self.preco_unitario,
-            'valor_total': self.valor_total,
-            'regiao': self.regiao,
-            'vendedor': self.vendedor,
-            'created_at': self.created_at.isoformat() if self.created_at else None
-        }
-

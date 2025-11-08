@@ -4,7 +4,7 @@ Blueprint da API interna.
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from app import db
-from app.models import Upload
+from app.infrastructure.database.models import Upload
 from app.services.data_processor import DataProcessor
 from app.services.data_collector import DataCollector
 

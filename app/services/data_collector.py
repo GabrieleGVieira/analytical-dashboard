@@ -5,7 +5,7 @@ import requests
 from datetime import datetime
 from flask import current_app
 from app import db, cache
-from app.models import Cotacao
+from app.infrastructure.database.models import Cotacao
 
 
 class DataCollector:

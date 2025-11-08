@@ -2,10 +2,10 @@
 Serviço de análises e agregações.
 """
 import pandas as pd
-from datetime import datetime, timedelta
-from sqlalchemy import func, extract
+from datetime import datetime
+from sqlalchemy import func
 from app import db
-from app.models import Venda, Custo, Meta, Cotacao
+from app.infrastructure.database.models import Venda, Cotacao
 
 
 class Analytics:
@@ -196,7 +196,6 @@ class Analytics:
             ]
         }
 
-    
     def _aplicar_filtro_data(self, query, model, data_inicio=None, data_fim=None):
         """Aplica filtros de data na query."""
         if data_inicio:

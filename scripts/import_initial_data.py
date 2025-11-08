@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app import create_app, db
-from app.models import Venda, Custo, Meta
+from app.infrastructure.database.models import Venda, Custo, Meta
 
 
 def importar_vendas(app):

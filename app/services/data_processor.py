@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from flask import current_app
 from app import db
-from app.models import Venda, Custo, Meta
+from app.infrastructure.database.models import Venda, Custo
 
 
 class DataProcessor:

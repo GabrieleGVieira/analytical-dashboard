@@ -47,3 +47,23 @@ class CurrencyRepository:
         except SQLAlchemyError as e:
             logger.exception("Erro ao consultar cotação de %s: %s", currency, e)
             return []
+
+    def add_or_update(self, cotacao: Cotacao):
+        """
+        Adiciona nova cotação ou atualiza se já existir (mesma moeda + data_hora).
+        """
+        try:
+            existing = self._session.query(Cotacao).filter_by(
+                moeda=cotacao.moeda,
+                data_hora=cotacao.data_hora
+            ).first()
+
+            if existing:
+                existing.valor = cotacao.valor
+            else:
+                self._session.add(cotacao)
+
+            self._session.commit()
+        except SQLAlchemyError as e:
+            self._session.rollback()
+            raise e

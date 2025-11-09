@@ -36,11 +36,14 @@ def create_app(config_name='default'):
     # Registra blueprints
     from app.blueprints.dashboard import dashboard_bp
     from app.blueprints.api import api_bp
-    from app.modules.routes.analytics_routes import analytics_routes
+    from app.core.scheduler import start_scheduler
+    from app.modules.routes import analytics_routes, collector_routes
     
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(api_bp, url_prefix='/api')
     analytics_routes(app)
+    collector_routes(app)
+    start_scheduler(app)
     
     return app
 

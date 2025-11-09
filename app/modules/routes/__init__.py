@@ -1,0 +1,2 @@
+from .collector_routes import collector_routes
+from .analytics_routes import analytics_routes

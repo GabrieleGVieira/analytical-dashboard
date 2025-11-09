@@ -32,6 +32,7 @@ class SalesCurrencyCorrelation:
 
             sales = self.sale_repo.get_sales_by_day(start_date, end_date)
             currency_price = self.currency_repo.get_currency_price_by_day(currency, start_date, end_date)
+            print(currency_price)
 
             if not sales or not currency_price:
                 logger.warning("Dados insuficientes para calcular correlação.")

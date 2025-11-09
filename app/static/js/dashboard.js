@@ -1,5 +1,5 @@
 // Variáveis globais para os gráficos
-let chartVendasTempo, chartVendasCategoria, chartVendasRegiao, chartTopProdutos;
+let chartVendasTempo, chartVendasCategoria, chartVendasRegiao, chartTopProdutos, chartVendasMultiplosPeriodos;
 
 // Função principal para carregar dashboard
 function carregarDashboard() {
@@ -11,6 +11,7 @@ function carregarDashboard() {
     carregarGraficoVendasCategoria(dataInicio, dataFim);
     carregarGraficoVendasRegiao(dataInicio, dataFim);
     carregarGraficoTopProdutos(dataInicio, dataFim);
+    carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim);
 }
 
 // Carrega KPIs
@@ -36,7 +37,7 @@ function carregarKPIs(dataInicio, dataFim) {
 
 // Carrega gráfico de vendas ao longo do tempo
 function carregarGraficoVendasTempo(dataInicio, dataFim) {
-    let url = '/data/vendas-tempo';
+    let url = '/api/analytics/long_term_sales';
     const params = new URLSearchParams();
     if (dataInicio) params.append('data_inicio', dataInicio);
     if (dataFim) params.append('data_fim', dataFim);
@@ -297,5 +298,67 @@ function formatarMoeda(valor) {
 
 function formatarNumero(valor) {
     return new Intl.NumberFormat('pt-BR').format(valor);
+}
+
+function carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim) {
+    let url = '/api/analytics/multiple_period_sales';
+    const params = new URLSearchParams();
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (params.toString()) url += '?' + params.toString();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const ctx = document.getElementById('chartVendasMultiplosPeriodos').getContext('2d');
+
+            if (chartVendasMultiplosPeriodos) {
+                chartVendasMultiplosPeriodos.destroy();
+            }
+
+            chartVendasMultiplosPeriodos = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Quantidades',
+                            data: data.quantidades,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparação de Vendas - Período Atual x Anterior'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar gráfico múltiplos períodos:', error));
 }
 

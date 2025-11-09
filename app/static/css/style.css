@@ -1,66 +1,112 @@
-/* Estilos customizados do dashboard */
+/* Estilos customizados do dashboard - Paleta Carbon Blindados (High-End) */
+
+:root {
+    --carbon-base-bg: #F8F9FA;      /* Fundo Principal (Quase Branco) */
+    --carbon-dark: #1C2025;         /* Grafite Profundo (Navbar, Cards Chave, Textos) */
+    --carbon-primary: #3B5F40;      /* Verde Escuro/Petróleo (Ação, Vendas, Positivo) */
+    --carbon-secondary: #5a6268;    /* Cinza Sóbrio (Secundário) */
+    --carbon-text-light: #F8F9FA;   /* Branco/Prata em Fundo Escuro */
+    --carbon-negative: #990000;     /* Vermelho Borgonha */
+    --carbon-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.15); /* Sombra mais visível */
+}
 
 body {
-    background-color: #f8f9fa;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--carbon-base-bg);
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--carbon-dark);
 }
 
 .card {
     border: none;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.75rem; /* Bordas mais arredondadas */
+    box-shadow: var(--carbon-shadow); /* Sombra mais flutuante */
     margin-bottom: 1.5rem;
+    background-color: #ffffff;
 }
 
 .card-title {
-    font-weight: 600;
-    color: #495057;
+    font-weight: 700;
+    color: var(--carbon-dark);
     margin-bottom: 1rem;
+    /* Remover a borda inferior para um visual mais limpo, a sombra do card já separa */
+    padding-bottom: 0;
 }
 
+/* Navbar: Grafite Profundo */
 .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+.navbar-dark.bg-primary {
+    background-color: var(--carbon-dark) !important;
+    border-bottom: 3px solid var(--carbon-primary); /* Linha de Destaque */
+}
+
+/* Botões do Filtro */
+.btn-primary {
+    background-color: var(--carbon-primary);
+    border-color: var(--carbon-primary);
+    font-weight: 600; /* Botão com peso */
+}
+
+.btn-primary:hover {
+    background-color: #315135;
+    border-color: #315135;
+}
+
+/* Botão Secundário (Limpar Filtros) */
+.btn-secondary {
+    background-color: transparent !important;
+    color: var(--carbon-secondary) !important;
+    border-color: var(--carbon-secondary) !important;
     font-weight: 600;
-    font-size: 1.25rem;
 }
 
-/* KPI Cards */
-.bg-primary {
-    background-color: #0d6efd !important;
+/* KPI Cards - Estilo Alto Contraste/Premium */
+
+/* KPI 1: Receita Total - Fundo Grafite Profundo */
+.kpi-card-revenue.bg-primary {
+    background-color: var(--carbon-dark) !important;
+    color: var(--carbon-text-light) !important;
 }
 
-.bg-success {
-    background-color: #198754 !important;
+/* KPI 2: Número de Vendas - Fundo Verde Petróleo */
+.kpi-card-sales.bg-success {
+    background-color: var(--carbon-primary) !important;
+    color: var(--carbon-text-light) !important;
 }
 
-.bg-info {
-    background-color: #0dcaf0 !important;
+/* KPI 3: Ticket Médio - Fundo Cinza Sóbrio */
+.kpi-card-ticket.bg-info {
+    background-color: var(--carbon-secondary) !important;
+    color: var(--carbon-text-light) !important;
 }
 
-.bg-warning {
-    background-color: #ffc107 !important;
-    color: #212529 !important;
+/* KPI 4: Crescimento - Fundo Claro e Limpo */
+.kpi-card-growth.bg-warning {
+    background-color: #ffffff !important;
+    /* Remove a borda para deixar o card mais limpo, a sombra já define */
+    border: none;
+    color: var(--carbon-dark) !important;
 }
 
-/* Gráficos */
-canvas {
-    max-height: 400px;
+/* Classes de Valor (para a tag H3) */
+.kpi-card-revenue h3, .kpi-card-sales h3, .kpi-card-ticket h3, .kpi-card-growth h3 {
+    font-size: 2.2rem; /* Números maiores para impacto */
+    font-weight: 700; /* Números em destaque */
 }
 
-/* Loading spinner */
-.spinner-border {
-    width: 1rem;
-    height: 1rem;
-    border-width: 0.15em;
+/* Classes para Crescimento */
+.text-growth-positive {
+    color: var(--carbon-primary) !important; /* Verde Petróleo */
+    font-weight: 700;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .card {
-        margin-bottom: 1rem;
-    }
-    
-    canvas {
-        max-height: 300px;
-    }
+.text-growth-negative {
+    color: var(--carbon-negative) !important; /* Vermelho Borgonha */
+    font-weight: 700;
 }
+/* ... (demais estilos) ... */
 

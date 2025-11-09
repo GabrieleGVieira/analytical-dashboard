@@ -36,3 +36,25 @@ class SaleRepository:
         except SQLAlchemyError as e:
             logger.exception("Erro ao consultar vendas por dia: %s", e)
             return []
+
+    def get_sales_mount_and_values_by_day(self, start_date: Optional[str] = None, end_date: Optional[str] = None):
+        try:
+            query = self._session.query(
+                Venda.data.label("date"),
+                func.sum(Venda.valor_total).label('values'),
+                func.sum(Venda.quantidade).label('amount')
+            )
+
+            if start_date:
+                query = query.filter(Venda.data >= start_date)
+            if end_date:
+                query = query.filter(Venda.data <= end_date)
+
+            query = query.group_by(Venda.data).order_by(Venda.data)
+
+            results = query.all()
+            return results
+
+        except Exception as e:
+            logger.exception(f"Erro ao buscar resumo diário de vendas: {e}")
+            return []

@@ -1,8 +1,8 @@
 import logging
 from flask import request, jsonify
 from app.modules.repositories import SaleRepository, CurrencyRepository
-from app.modules.usecases.analytics.sales_currency_correlation import SalesCurrencyCorrelation
 from app import db
+from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales
 
 logger = logging.getLogger(__name__)
 
@@ -11,11 +11,12 @@ class AnalyticsController:
         self.sale_repo = None
         self.currency_repo = None
         self.use_case = None
+        self.session = db.session
 
     def get_sales_currency_correlation(self):
         try:
-            start_date = request.args.get("start_date")
-            end_date = request.args.get("end_date")
+            start_date = request.args.get("data_inicio")
+            end_date = request.args.get("data_fim")
             currency = request.args.get("currency", "USD")
 
             logger.info(
@@ -23,9 +24,8 @@ class AnalyticsController:
                 currency, start_date, end_date
             )
 
-            session = db.session
-            self.sale_repo = SaleRepository(session)
-            self.currency_repo = CurrencyRepository(session)
+            self.sale_repo = SaleRepository(self.session)
+            self.currency_repo = CurrencyRepository(self.session)
             self.use_case = SalesCurrencyCorrelation(self.sale_repo, self.currency_repo)
 
             df, corr = self.use_case.run(start_date, end_date, currency)
@@ -51,3 +51,33 @@ class AnalyticsController:
         except Exception as e:
             logger.exception("Erro ao processar requisição de correlação: %s", e)
             return jsonify({"error": str(e)}), 500
+
+    def get_long_term_sales(self):
+        try:
+            start_date = request.args.get("data_inicio")
+            end_date = request.args.get("data_fim")
+            logger.info(
+                "Iniciando requisição para pegar evolução de vendas de %s até %s",
+                start_date, end_date
+            )
+
+            self.sale_repo = SaleRepository(self.session)
+            self.use_case = LongTermSales(self.sale_repo)
+
+            sales = self.use_case.run(start_date, end_date)
+
+            response = {
+            'labels': [s.date.strftime('%Y-%m-%d') for s in sales],
+            'valores': [float(s.values) for s in sales],
+            'quantidades': [int(s.amount) for s in sales]
+        }
+
+            logger.info(
+                "Requisição concluída. Registros retornados: %d", len(response["valores"])
+            )
+            return jsonify(response), 200
+
+        except Exception as e:
+            logger.exception("Erro ao processar requisição para evolução de vendas: %s", e)
+            return jsonify({"error": str(e)}), 500
+

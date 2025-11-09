@@ -22,5 +22,6 @@ def analytics_routes(app):
     # analytics_bp.add_url_rule('/vendas-regiao', view_func=controller.get_vendas_regiao, methods=['GET'])
     # analytics_bp.add_url_rule('/top-produtos', view_func=controller.get_top_produtos, methods=['GET'])
     analytics_bp.add_url_rule('/sales-currency-correlation', view_func=controller.get_sales_currency_correlation, methods=['GET'])
+    analytics_bp.add_url_rule('/long_term_sales', view_func=controller.get_long_term_sales, methods=['GET'])
 
     app.register_blueprint(analytics_bp)

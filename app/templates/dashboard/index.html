@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Filtros -->
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
@@ -33,43 +32,42 @@
         </div>
     </div>
 
-    <!-- KPIs -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card text-white bg-primary">
+            <div class="card text-white bg-primary kpi-card-revenue">
                 <div class="card-body">
-                    <h6 class="card-title">Receita Total</h6>
+                    <h6 class="card-title text-white">Receita Total</h6>
                     <h3 id="kpiReceitaTotal" class="mb-0">R$ 0,00</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-success">
+            <div class="card text-white bg-success kpi-card-sales">
                 <div class="card-body">
-                    <h6 class="card-title">Número de Vendas</h6>
+                    <h6 class="card-title text-white">Número de Vendas</h6>
                     <h3 id="kpiNumVendas" class="mb-0">0</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-info">
+            <div class="card text-white bg-info kpi-card-ticket">
                 <div class="card-body">
-                    <h6 class="card-title">Ticket Médio</h6>
+                    <h6 class="card-title text-white">Ticket Médio</h6>
                     <h3 id="kpiTicketMedio" class="mb-0">R$ 0,00</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-warning">
+            <div class="card kpi-card-growth bg-warning">
                 <div class="card-body">
-                    <h6 class="card-title">Crescimento</h6>
-                    <h3 id="kpiCrescimento" class="mb-0">0%</h3>
+                    <h6 class="card-title text-dark">Crescimento</h6>
+
+                    <h3 id="kpiCrescimento" class="mb-0 text-growth-neutral">0%</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráficos -->
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="card">
@@ -106,6 +104,14 @@
                 </div>
             </div>
         </div>
+         <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Vendas x Multiplos Periodos </h5>
+                    <canvas id="chartVendasMultiplosPeriodos" height="200"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -118,4 +124,3 @@
     });
 </script>
 {% endblock %}
-

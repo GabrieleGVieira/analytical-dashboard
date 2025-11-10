@@ -1,9 +1,8 @@
-# domain/repositories/venda_repository.py
 import logging
 from typing import List, Tuple, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
-from app.infrastructure.database.models import Venda
+from app.infrastructure.database.models import Venda, Custo
 
 logger = logging.getLogger(__name__)
 
@@ -57,4 +56,26 @@ class SaleRepository:
 
         except Exception as e:
             logger.exception(f"Erro ao buscar resumo diário de vendas: {e}")
+            return []
+
+    def get_costs_sales_total(self, start_date: Optional[str] = None, end_date: Optional[str] = None):
+        """
+                           Retorna vendas e custos totais de um produto.
+                           """
+        try:
+
+            query = (
+                self._session.query(
+                    func.sum(Venda.valor_total).label("sales_total"),
+                    func.sum(Venda.quantidade * Custo.custo_unitario).label("costs_total")
+                )
+                .join(Custo, Venda.produto == Custo.produto)
+                .filter(Venda.data.between(start_date, end_date))
+            )
+            result = query.first()
+            sales_total = result.sales_total or 0
+            costs_total = result.costs_total or 0
+            return sales_total, costs_total
+        except Exception as e:
+            logger.exception(f"Erro ao buscar total de vendas: {e}")
             return []

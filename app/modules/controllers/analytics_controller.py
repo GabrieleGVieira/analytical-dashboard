@@ -2,7 +2,7 @@ import logging
 from flask import request, jsonify
 from app.modules.repositories import SaleRepository, CurrencyRepository
 from app import db
-from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales
+from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales, ProfitMargin
 
 logger = logging.getLogger(__name__)
 
@@ -79,5 +79,32 @@ class AnalyticsController:
 
         except Exception as e:
             logger.exception("Erro ao processar requisição para evolução de vendas: %s", e)
+            return jsonify({"error": str(e)}), 500
+
+    def get_profit_margin(self):
+        try:
+            start_date = request.args.get("data_inicio")
+            end_date = request.args.get("data_fim")
+            logger.info(
+                "Iniciando requisição para pegar margem de lucro de %s até %s",
+                start_date, end_date
+            )
+
+            self.sale_repo = SaleRepository(self.session)
+            self.use_case = ProfitMargin(self.sale_repo)
+
+            sales_total, costs_total, profit, percent = self.use_case.run(start_date, end_date)
+
+            response = {
+            "total_vendas": sales_total,
+            "total_custos": costs_total,
+            "lucro_total": profit,
+            "margem_percentual": percent
+        }
+
+            return jsonify(response), 200
+
+        except Exception as e:
+            logger.exception("Erro ao processar requisição pegar margem de lucris: %s", e)
             return jsonify({"error": str(e)}), 500
 

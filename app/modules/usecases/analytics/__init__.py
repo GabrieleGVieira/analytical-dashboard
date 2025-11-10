@@ -1,3 +1,4 @@
 from .sales_currency_correlation import SalesCurrencyCorrelation
 from .multiple_period_sales import MultiplePeriodSales
-from .long_termn_sales import LongTermSales
+from .long_term_sales import LongTermSales
+from .profit_margin import ProfitMargin

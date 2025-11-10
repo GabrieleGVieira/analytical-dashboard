@@ -12,6 +12,7 @@ function carregarDashboard() {
     carregarGraficoVendasRegiao(dataInicio, dataFim);
     carregarGraficoTopProdutos(dataInicio, dataFim);
     carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim);
+    carregarMargemLucro(dataInicio, dataFim)
 }
 
 // Carrega KPIs
@@ -37,7 +38,7 @@ function carregarKPIs(dataInicio, dataFim) {
 
 // Carrega gráfico de vendas ao longo do tempo
 function carregarGraficoVendasTempo(dataInicio, dataFim) {
-    let url = '/api/analytics/long_term_sales';
+    let url = '/api/analytics/long-term-sales';
     const params = new URLSearchParams();
     if (dataInicio) params.append('data_inicio', dataInicio);
     if (dataFim) params.append('data_fim', dataFim);
@@ -300,8 +301,20 @@ function formatarNumero(valor) {
     return new Intl.NumberFormat('pt-BR').format(valor);
 }
 
+function formatarPercentual(valor) {
+  if (valor === null || valor === undefined || isNaN(valor)) return '-';
+  const percentual = valor > 1 ? valor / 100 : valor;
+
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(percentual);
+}
+
+
 function carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim) {
-    let url = '/api/analytics/multiple_period_sales';
+    let url = '/api/analytics/multiple-period-sales';
     const params = new URLSearchParams();
     if (dataInicio) params.append('data_inicio', dataInicio);
     if (dataFim) params.append('data_fim', dataFim);
@@ -361,4 +374,21 @@ function carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim) {
         })
         .catch(error => console.error('Erro ao carregar gráfico múltiplos períodos:', error));
 }
+
+function carregarMargemLucro(dataInicio, dataFim) {
+    let url = '/api/analytics/profit-margin';
+    const params = new URLSearchParams();
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (params.toString()) url += '?' + params.toString();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('kpiMargemDeLucro').textContent =
+                formatarPercentual(data.margem_percentual);
+        })
+        .catch(error => console.error('Erro ao carregar KPIs:', error));
+}
+
 

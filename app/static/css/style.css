@@ -1,112 +1,141 @@
-/* Estilos customizados do dashboard - Paleta Carbon Blindados (High-End) */
-
-:root {
-    --carbon-base-bg: #F8F9FA;      /* Fundo Principal (Quase Branco) */
-    --carbon-dark: #1C2025;         /* Grafite Profundo (Navbar, Cards Chave, Textos) */
-    --carbon-primary: #3B5F40;      /* Verde Escuro/Petróleo (Ação, Vendas, Positivo) */
-    --carbon-secondary: #5a6268;    /* Cinza Sóbrio (Secundário) */
-    --carbon-text-light: #F8F9FA;   /* Branco/Prata em Fundo Escuro */
-    --carbon-negative: #990000;     /* Vermelho Borgonha */
-    --carbon-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.15); /* Sombra mais visível */
-}
+/* ======= Estilos gerais do dashboard ======= */
 
 body {
-    background-color: var(--carbon-base-bg);
-    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    color: var(--carbon-dark);
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
+
+/* ======= Cartões ======= */
 
 .card {
     border: none;
-    border-radius: 0.75rem; /* Bordas mais arredondadas */
-    box-shadow: var(--carbon-shadow); /* Sombra mais flutuante */
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     margin-bottom: 1.5rem;
-    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .card-title {
-    font-weight: 700;
-    color: var(--carbon-dark);
-    margin-bottom: 1rem;
-    /* Remover a borda inferior para um visual mais limpo, a sombra do card já separa */
-    padding-bottom: 0;
-}
-
-/* Navbar: Grafite Profundo */
-.navbar-brand {
-    font-weight: 700;
-    font-size: 1.5rem;
-    text-transform: uppercase;
-}
-
-.navbar-dark.bg-primary {
-    background-color: var(--carbon-dark) !important;
-    border-bottom: 3px solid var(--carbon-primary); /* Linha de Destaque */
-}
-
-/* Botões do Filtro */
-.btn-primary {
-    background-color: var(--carbon-primary);
-    border-color: var(--carbon-primary);
-    font-weight: 600; /* Botão com peso */
-}
-
-.btn-primary:hover {
-    background-color: #315135;
-    border-color: #315135;
-}
-
-/* Botão Secundário (Limpar Filtros) */
-.btn-secondary {
-    background-color: transparent !important;
-    color: var(--carbon-secondary) !important;
-    border-color: var(--carbon-secondary) !important;
     font-weight: 600;
+    color: #343a40;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
 }
 
-/* KPI Cards - Estilo Alto Contraste/Premium */
+/* ======= Navbar ======= */
 
-/* KPI 1: Receita Total - Fundo Grafite Profundo */
-.kpi-card-revenue.bg-primary {
-    background-color: var(--carbon-dark) !important;
-    color: var(--carbon-text-light) !important;
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+    white-space: nowrap;
 }
 
-/* KPI 2: Número de Vendas - Fundo Verde Petróleo */
-.kpi-card-sales.bg-success {
-    background-color: var(--carbon-primary) !important;
-    color: var(--carbon-text-light) !important;
+/* ======= KPI Cards ======= */
+
+.bg-primary {
+    background-color: #0d6efd !important;
 }
 
-/* KPI 3: Ticket Médio - Fundo Cinza Sóbrio */
-.kpi-card-ticket.bg-info {
-    background-color: var(--carbon-secondary) !important;
-    color: var(--carbon-text-light) !important;
+.bg-success {
+    background-color: #198754 !important;
 }
 
-/* KPI 4: Crescimento - Fundo Claro e Limpo */
-.kpi-card-growth.bg-warning {
-    background-color: #ffffff !important;
-    /* Remove a borda para deixar o card mais limpo, a sombra já define */
-    border: none;
-    color: var(--carbon-dark) !important;
+.bg-info {
+    background-color: #0dcaf0 !important;
 }
 
-/* Classes de Valor (para a tag H3) */
-.kpi-card-revenue h3, .kpi-card-sales h3, .kpi-card-ticket h3, .kpi-card-growth h3 {
-    font-size: 2.2rem; /* Números maiores para impacto */
-    font-weight: 700; /* Números em destaque */
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
 }
 
-/* Classes para Crescimento */
-.text-growth-positive {
-    color: var(--carbon-primary) !important; /* Verde Petróleo */
-    font-weight: 700;
+/* ======= Gráficos ======= */
+
+canvas {
+    max-height: 400px;
+    width: 100% !important;
 }
 
-.text-growth-negative {
-    color: var(--carbon-negative) !important; /* Vermelho Borgonha */
-    font-weight: 700;
-}
-/* ... (demais estilos) ... */
+/* ======= Spinner ======= */
 
+.spinner-border {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-width: 0.15em;
+}
+
+/* ======= Responsividade ======= */
+
+/* Tablets */
+@media (max-width: 992px) {
+    .card {
+        margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    canvas {
+        max-height: 320px;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 768px) {
+    body {
+        padding: 0 0.5rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 0.6rem;
+        padding: 0.75rem;
+    }
+
+    .card-title {
+        font-size: 0.95rem;
+    }
+
+    canvas {
+        max-height: 260px;
+    }
+}
+
+/* Telas muito pequenas (ex: iPhone SE, Galaxy A01) */
+@media (max-width: 480px) {
+    .card {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    .card-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+
+    canvas {
+        max-height: 220px;
+    }
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.card-title {
+  word-break: break-word;
+}

@@ -3,30 +3,31 @@
 {% block title %}Dashboard - Análise de Vendas{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 px-2 px-md-4">
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Filtros</h5>
                     <div class="row">
-                        <div class="col-md-3">
-                            <label for="dataInicio" class="form-label">Data Inicial</label>
-                            <input type="date" class="form-control" id="dataInicio">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="dataFim" class="form-label">Data Final</label>
-                            <input type="date" class="form-control" id="dataFim">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
-                            <button class="btn btn-primary d-block w-100" id="aplicarFiltros">Aplicar Filtros</button>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
-                            <button class="btn btn-secondary d-block w-100" id="limparFiltros">Limpar Filtros</button>
-                        </div>
-                    </div>
+  <div class="col-12 col-md-3">
+      <label for="dataInicio" class="form-label">Data Inicial</label>
+      <input type="date" class="form-control" id="dataInicio">
+  </div>
+  <div class="col-12 col-md-3">
+      <label for="dataFim" class="form-label">Data Final</label>
+      <input type="date" class="form-control" id="dataFim">
+  </div>
+  <div class="col-12 col-md-3">
+      <label class="form-label">&nbsp;</label>
+      <button class="btn btn-primary d-block w-100" id="aplicarFiltros">Aplicar Filtros</button>
+  </div>
+  <div class="col-12 col-md-3">
+      <label class="form-label">&nbsp;</label>
+      <button class="btn btn-secondary d-block w-100" id="limparFiltros">Limpar Filtros</button>
+  </div>
+</div>
+
                 </div>
             </div>
         </div>
@@ -69,32 +70,52 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Evolução de Vendas ao Longo do Tempo</h5>
-                    <canvas id="chartVendasTempo"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Vendas por Região</h5>
-                    <canvas id="chartVendasRegiao"></canvas>
-                </div>
+    <div class="col-12 col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Evolução de Vendas ao Longo do Tempo</h5>
+                <canvas id="chartVendasTempo"></canvas>
             </div>
         </div>
     </div>
+    <div class="col-12 col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Vendas por Região</h5>
+                <canvas id="chartVendasRegiao"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <div class="row mb-4">
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Vendas por Categoria</h5>
+                <canvas id="chartVendasCategoria"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Top 10 Produtos Mais Vendidos</h5>
+                <canvas id="chartTopProdutos"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
     <div class="row mb-4">
         <div class="card p-4 bg-white rounded-2xl shadow">
   <h3 class="text-lg font-semibold mb-2 text-gray-700">Desempenho Geral por Vendedor</h3>
   <canvas id="chartDesempenhoVendedores"></canvas>
 </div>
 </div>
-    </div>
-
-<div class="card p-4 bg-white rounded-2xl shadow mt-4">
+    <div class="row mb-4">
+        <div class="card shadow p-3 p-md-4">
   <h3 class="text-lg font-semibold mb-3 text-gray-700">Ranking Completo de Vendedores</h3>
 
   <div class="table-responsive">
@@ -115,6 +136,9 @@
     </table>
   </div>
 </div>
+
+    </div>
+    </div>
 
 <!-- Imports necessários -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">

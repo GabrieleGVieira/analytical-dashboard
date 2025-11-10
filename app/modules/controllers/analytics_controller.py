@@ -3,7 +3,7 @@ from flask import request, jsonify
 from app.modules.repositories import SaleRepository, CurrencyRepository, GoalRepository
 from app import db
 from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales, ProfitMargin, \
-    SellerRanking
+    SellerRanking, SalesByCategory
 
 logger = logging.getLogger(__name__)
 
@@ -120,5 +120,34 @@ class AnalyticsController:
 
         ranking = use_case.run(year, month)
         return jsonify({"ranking": [r.to_dict() for r in ranking]}), 200
+
+    def get_total_sales_by_category(self):
+        try:
+            start_date = request.args.get("data_inicio")
+            end_date = request.args.get("data_fim")
+
+            self.sale_repo = SaleRepository(self.session)
+            self.use_case = SalesByCategory(self.sale_repo)
+
+            sales = self.use_case.run(start_date, end_date)
+
+            response = {
+            'labels': [s.category for s in sales],
+            'valores': [float(s.value) for s in sales],
+            'quantidades': [int(s.amount) for s in sales]
+        }
+            # response = [{"categoria": s.category,
+            #              "valores": float(s.value),
+            #              "quantidade": int(s.amount)} for s in sales]
+
+            return jsonify(response), 200
+
+        except Exception as e:
+            logger.exception("Erro ao processar requisição pegar margem de lucris: %s", e)
+            return jsonify({"error": str(e)}), 500
+
+
+
+
 
 

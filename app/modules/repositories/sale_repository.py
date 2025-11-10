@@ -72,8 +72,11 @@ class SaleRepository:
                     func.sum(Venda.quantidade * Custo.custo_unitario).label("costs_total")
                 )
                 .join(Custo, Venda.produto == Custo.produto)
-                .filter(Venda.data.between(start_date, end_date))
             )
+            if start_date:
+                query = query.filter(Venda.data >= start_date)
+            if end_date:
+                query = query.filter(Venda.data <= end_date)
             result = query.first()
             sales_total = result.sales_total or 0
             costs_total = result.costs_total or 0
@@ -113,3 +116,18 @@ class SaleRepository:
         )
 
         return query
+
+    def get_sales_amount_by_category(self, start_date: Optional[str] = None, end_date: Optional[str] = None):
+        query = self._session.query(
+            Venda.categoria.label("category"),
+            func.sum(Venda.valor_total).label('value'),
+            func.sum(Venda.quantidade).label('amount')
+        )
+        if start_date:
+            query = query.filter(Venda.data >= start_date)
+        if end_date:
+            query = query.filter(Venda.data <= end_date)
+
+        query = query.group_by(Venda.categoria).order_by(func.sum(Venda.valor_total).desc())
+
+        return query.all()

@@ -93,7 +93,7 @@ function carregarGraficoVendasTempo(dataInicio, dataFim) {
 
 // Carrega gráfico de vendas por categoria
 function carregarGraficoVendasCategoria(dataInicio, dataFim) {
-    let url = '/data/vendas-categoria';
+    let url = '/api/analytics/sales-by-category';
     const params = new URLSearchParams();
     if (dataInicio) params.append('data_inicio', dataInicio);
     if (dataFim) params.append('data_fim', dataFim);

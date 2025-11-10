@@ -10,7 +10,7 @@ class SellerPerformance:
     margem_lucro: float
     quantidade_vendida: int
     meta_batida: float
-    meta_valor: int
+    meta_valor: float
     indice_performance: float = field(init=False)
 
     def __post_init__(self):
@@ -36,5 +36,6 @@ class SellerPerformance:
             "margem_lucro": self.margem_lucro,
             "quantidade_vendida": self.quantidade_vendida,
             "meta_batida": self.meta_batida,
+            "meta_valor": self.meta_valor,
             "indice_performance": self.indice_performance,
         }

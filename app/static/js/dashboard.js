@@ -13,6 +13,7 @@ function carregarDashboard() {
     carregarGraficoTopProdutos(dataInicio, dataFim);
     carregarMargemLucro(dataInicio, dataFim)
     carregarGraficoDesempenhoVendedores(dataInicio, dataFim)
+    carregarTabelaVendedores(dataInicio, dataFim)
 }
 
 // Carrega KPIs
@@ -396,75 +397,50 @@ function formatarPercentual(valor) {
   }).format(percentual);
 }
 
+function carregarTabelaVendedores(dataInicio, dataFim) {
+    let url = '/api/analytics/seller-ranking';
+    const params = new URLSearchParams();
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (params.toString()) url += '?' + params.toString();
 
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const ranking = data.ranking || [];
 
-// function carregarGraficoDesempenhoVendedor(dataInicio, dataFim) {
-//     let url = '/api/analytics/seller-ranking';
-//     const params = new URLSearchParams();
-//     if (dataInicio) params.append('data_inicio', dataInicio);
-//     if (dataFim) params.append('data_fim', dataFim);
-//     if (params.toString()) url += '?' + params.toString();
-//
-//     fetch(url)
-//         .then(response => response.json())
-//         .then(data => {
-//             const ranking = data.ranking || [];
-//
-//             const ctx = document.getElementById('chartDesempenhoVendedor').getContext('2d');
-//             // if (chartDesempenhoVendedor) chartDesempenhoVendedor.destroy();
-//
-//             chartDesempenhoVendedor = new Chart(ctx, {
-//                 type: 'bar',
-//                 data: {
-//                     labels: ranking.map(v => v.vendedor),
-//                     datasets: [
-//                         {
-//                             label: 'Lucro Total (R$)',
-//                             data: ranking.map(v => v.lucro_total),
-//                             backgroundColor: 'rgba(13, 110, 253, 0.7)' // azul
-//                         },
-//                         {
-//                             label: 'Meta Batida (%)',
-//                             data: ranking.map(v => v.meta_batida),
-//                             backgroundColor: 'rgba(25, 135, 84, 0.7)' // verde
-//                         },
-//                         {
-//                             label: 'Margem de Lucro (%)',
-//                             data: ranking.map(v => v.margem_lucro),
-//                             backgroundColor: 'rgba(255, 193, 7, 0.7)' // amarelo
-//                         }
-//                     ]
-//                 },
-//                 options: {
-//                     responsive: true,
-//                     plugins: {
-//                         legend: {
-//                             position: 'top'
-//                         },
-//                         title: {
-//                             display: true,
-//                             text: 'Desempenho por Vendedor'
-//                         },
-//                         tooltip: {
-//                             callbacks: {
-//                                 label: function(context) {
-//                                     const label = context.dataset.label || '';
-//                                     const valor = context.parsed.y || 0;
-//                                     return `${label}: ${valor.toFixed(2)}%`;
-//                                 }
-//                             }
-//                         }
-//                     },
-//                     scales: {
-//                         y: {
-//                             beginAtZero: true,
-//                             ticks: {
-//                                 callback: v => v + '%'
-//                             }
-//                         }
-//                     }
-//                 }
-//             });
-//         })
-//         .catch(err => console.error('Erro ao carregar gráfico Desempenho por Vendedor:', err));
-// }
+            // Destroi tabela existente antes de recriar (para recarregar filtros)
+            if ($.fn.DataTable.isDataTable('#tabelaVendedores')) {
+                $('#tabelaVendedores').DataTable().destroy();
+            }
+
+            // Preenche as linhas
+            const tbody = document.querySelector('#tabelaVendedores tbody');
+            tbody.innerHTML = ranking.map(v => `
+                <tr>
+                    <td>${v.vendedor}</td>
+                    <td>R$ ${v.vendas_totais.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td>R$ ${v.lucro_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td>${v.margem_lucro.toFixed(2)}%</td>
+                    <td>${v.quantidade_vendida}</td>
+                    <td>R$ ${v.meta_valor.toLocaleString('pt-BR')}</td>
+                    <td>${v.meta_batida.toFixed(2)}%</td>
+                    <td>
+                        <span class="badge ${v.indice_performance >= 80 ? 'bg-success' : v.indice_performance >= 60 ? 'bg-warning text-dark' : 'bg-danger'}">
+                            ${v.indice_performance.toFixed(2)}%
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Inicializa DataTable com recursos interativos
+            $('#tabelaVendedores').DataTable({
+                pageLength: 10,
+                order: [[7, 'desc']], // ordena inicialmente por índice de performance
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+                }
+            });
+        })
+        .catch(err => console.error('Erro ao carregar tabela de vendedores:', err));
+}

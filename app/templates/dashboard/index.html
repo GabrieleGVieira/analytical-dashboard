@@ -91,58 +91,36 @@
   <h3 class="text-lg font-semibold mb-2 text-gray-700">Desempenho Geral por Vendedor</h3>
   <canvas id="chartDesempenhoVendedores"></canvas>
 </div>
-        </div>
-
-<!--    <div class="row mb-4">-->
-<!--        <div class="col-md-6">-->
-<!--            <div class="card">-->
-<!--                <div class="card-body">-->
-<!--                    <h5 class="card-title">Vendas por Categoria</h5>-->
-<!--                    <canvas id="chartVendasCategoria"></canvas>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-6">-->
-<!--            <div class="card">-->
-<!--                <div class="card-body">-->
-<!--                    <h5 class="card-title">Top 10 Produtos Mais Vendidos</h5>-->
-<!--                    <canvas id="chartTopProdutos"></canvas>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="row mb-4">-->
-<!--               <div class="col-md-6">-->
-<!--                <div class="card">-->
-<!--                    <div class="card-body">-->
-<!--                        <h5 class="card-title">Top 10 Vendedores – Lucro Total</h5>-->
-<!--                        <canvas id="chartTopLucroTotal" height="200"></canvas>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--               </div>-->
-<!--         <div class="col-md-6">-->
-<!--            <div class="card">-->
-<!--                <div class="card-body">-->
-<!--                    <h5 class="card-title">Top 10 Vendedores – Quantidade de Vendas</h5>-->
-<!--                    <canvas id="chartTopVendasQuantidade" height="200"></canvas>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            </div>-->
-<!--       </div>-->
+</div>
     </div>
-<!-- </div>-->
-<!--        <div class="row mt-4">-->
-<!--  <div class="col-md-4">-->
-<!--    <canvas id="chartTopMetaVsRealizado" height="200"></canvas>-->
-<!--  </div>-->
-<!--  <div class="col-md-4">-->
-<!--    <canvas id="chartTopVendasQuantidade" height="200"></canvas>-->
-<!--  </div>-->
-<!--  <div class="col-md-4">-->
-<!--    <canvas id="chartTopLucroTotal" height="200"></canvas>-->
-<!--  </div>-->
-<!--</div>-->
 
+<div class="card p-4 bg-white rounded-2xl shadow mt-4">
+  <h3 class="text-lg font-semibold mb-3 text-gray-700">Ranking Completo de Vendedores</h3>
+
+  <div class="table-responsive">
+    <table id="tabelaVendedores" class="table table-striped table-hover w-100">
+      <thead>
+        <tr>
+          <th>Vendedor</th>
+          <th>Vendas Totais (R$)</th>
+          <th>Lucro Total (R$)</th>
+          <th>Margem de Lucro (%)</th>
+          <th>Qtd. Vendida</th>
+          <th>Meta (R$)</th>
+          <th>Meta Batida (%)</th>
+          <th>Índice de Performance (%)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Imports necessários -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 </div>
 {% endblock %}

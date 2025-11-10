@@ -2,6 +2,8 @@ import logging
 from typing import List, Tuple, Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
+
+from app.domain.entities import SellerPerformance
 from app.infrastructure.database.models import Venda, Custo
 
 logger = logging.getLogger(__name__)
@@ -79,3 +81,35 @@ class SaleRepository:
         except Exception as e:
             logger.exception(f"Erro ao buscar total de vendas: {e}")
             return []
+
+    def get_sales_summary_by_seller(self, year: int, month: int) -> List[SellerPerformance]:
+        """
+        Retorna total de vendas, quantidade e lucro por vendedor no mês.
+        """
+        subquery_cost = (
+            self._session.query(
+                Custo.produto,
+                Custo.custo_unitario.label("custo_unitario")
+            ).subquery()
+        )
+
+        query = (
+            self._session.query(
+                Venda.vendedor.label("seller"),
+                Venda.categoria.label("category"),
+                Venda.regiao.label("region"),
+                func.sum(Venda.valor_total).label("total_sales"),
+                func.sum(Venda.quantidade).label("total_quantity"),
+                func.sum(
+                    Venda.valor_total -
+                    (Venda.quantidade * func.coalesce(subquery_cost.c.custo_unitario, 0))
+                ).label("total_profit")
+            )
+            .join(subquery_cost, subquery_cost.c.produto == Venda.produto, isouter=True)
+            .filter(func.extract('year', Venda.data) == year)
+            .filter(func.extract('month', Venda.data) == month)
+            .group_by(Venda.vendedor)
+            .all()
+        )
+
+        return query

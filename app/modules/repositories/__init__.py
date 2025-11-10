@@ -1,2 +1,3 @@
 from .currency_repository import CurrencyRepository
 from .sale_repository import SaleRepository
+from .goal_repository import GoalRepository

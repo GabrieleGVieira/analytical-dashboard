@@ -1,5 +1,5 @@
 // Variáveis globais para os gráficos
-let chartVendasTempo, chartVendasCategoria, chartVendasRegiao, chartTopProdutos, chartVendasMultiplosPeriodos;
+let chartVendasTempo, chartVendasCategoria, chartVendasRegiao, chartTopProdutos, chartDesempenhoVendedores;
 
 // Função principal para carregar dashboard
 function carregarDashboard() {
@@ -11,8 +11,8 @@ function carregarDashboard() {
     carregarGraficoVendasCategoria(dataInicio, dataFim);
     carregarGraficoVendasRegiao(dataInicio, dataFim);
     carregarGraficoTopProdutos(dataInicio, dataFim);
-    carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim);
     carregarMargemLucro(dataInicio, dataFim)
+    carregarGraficoDesempenhoVendedores(dataInicio, dataFim)
 }
 
 // Carrega KPIs
@@ -253,6 +253,90 @@ function carregarGraficoTopProdutos(dataInicio, dataFim) {
         .catch(error => console.error('Erro ao carregar gráfico:', error));
 }
 
+function carregarMargemLucro(dataInicio, dataFim) {
+    let url = '/api/analytics/profit-margin';
+    const params = new URLSearchParams();
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (params.toString()) url += '?' + params.toString();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('kpiMargemDeLucro').textContent =
+                formatarPercentual(data.margem_percentual);
+        })
+        .catch(error => console.error('Erro ao carregar KPIs:', error));
+}
+
+function carregarGraficoDesempenhoVendedores(dataInicio, dataFim) {
+    let url = '/api/analytics/seller-ranking';
+    const params = new URLSearchParams();
+    if (dataInicio) params.append('data_inicio', dataInicio);
+    if (dataFim) params.append('data_fim', dataFim);
+    if (params.toString()) url += '&' + params.toString();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const ranking = data.ranking || [];
+
+            // Ordena por índice de performance e pega os top 10
+            const topVendedores = ranking
+                .sort((a, b) => b.indice_performance - a.indice_performance)
+                .slice(0, 10);
+
+            const ctx = document.getElementById('chartDesempenhoVendedores').getContext('2d');
+
+            if (chartDesempenhoVendedores) chartDesempenhoVendedores.destroy();
+
+            chartDesempenhoVendedores = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topVendedores.map(v => v.vendedor),
+                    datasets: [{
+                        label: 'Índice de Performance (%)',
+                        data: topVendedores.map(v => v.indice_performance),
+                        borderRadius: 12,
+                        backgroundColor: topVendedores.map(v =>
+                            v.indice_performance >= 80 ? 'rgba(34,197,94,0.7)' : // verde
+                            v.indice_performance >= 60 ? 'rgba(250,204,21,0.7)' : // amarelo
+                            'rgba(239,68,68,0.7)' // vermelho
+                        ),
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // horizontal (troque para 'x' se quiser vertical)
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Top 10 Vendedores – Índice de Performance'
+                        },
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.parsed.x.toFixed(2)}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Índice de Performance (%)' },
+                            ticks: { callback: v => v + '%' }
+                        },
+                        y: {
+                            ticks: { color: '#374151' }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.error('Erro ao carregar gráfico de desempenho:', err));
+}
+
 // Event listeners
 document.getElementById('aplicarFiltros').addEventListener('click', function() {
     carregarDashboard();
@@ -313,82 +397,74 @@ function formatarPercentual(valor) {
 }
 
 
-function carregarGraficoVendasMultiplosPeriodos(dataInicio, dataFim) {
-    let url = '/api/analytics/multiple-period-sales';
-    const params = new URLSearchParams();
-    if (dataInicio) params.append('data_inicio', dataInicio);
-    if (dataFim) params.append('data_fim', dataFim);
-    if (params.toString()) url += '?' + params.toString();
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            const ctx = document.getElementById('chartVendasMultiplosPeriodos').getContext('2d');
-
-            if (chartVendasMultiplosPeriodos) {
-                chartVendasMultiplosPeriodos.destroy();
-            }
-
-            chartVendasMultiplosPeriodos = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [
-                        {
-                            label: 'Quantidades',
-                            data: data.quantidades,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Comparação de Vendas - Período Atual x Anterior'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => console.error('Erro ao carregar gráfico múltiplos períodos:', error));
-}
-
-function carregarMargemLucro(dataInicio, dataFim) {
-    let url = '/api/analytics/profit-margin';
-    const params = new URLSearchParams();
-    if (dataInicio) params.append('data_inicio', dataInicio);
-    if (dataFim) params.append('data_fim', dataFim);
-    if (params.toString()) url += '?' + params.toString();
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('kpiMargemDeLucro').textContent =
-                formatarPercentual(data.margem_percentual);
-        })
-        .catch(error => console.error('Erro ao carregar KPIs:', error));
-}
-
-
+// function carregarGraficoDesempenhoVendedor(dataInicio, dataFim) {
+//     let url = '/api/analytics/seller-ranking';
+//     const params = new URLSearchParams();
+//     if (dataInicio) params.append('data_inicio', dataInicio);
+//     if (dataFim) params.append('data_fim', dataFim);
+//     if (params.toString()) url += '?' + params.toString();
+//
+//     fetch(url)
+//         .then(response => response.json())
+//         .then(data => {
+//             const ranking = data.ranking || [];
+//
+//             const ctx = document.getElementById('chartDesempenhoVendedor').getContext('2d');
+//             // if (chartDesempenhoVendedor) chartDesempenhoVendedor.destroy();
+//
+//             chartDesempenhoVendedor = new Chart(ctx, {
+//                 type: 'bar',
+//                 data: {
+//                     labels: ranking.map(v => v.vendedor),
+//                     datasets: [
+//                         {
+//                             label: 'Lucro Total (R$)',
+//                             data: ranking.map(v => v.lucro_total),
+//                             backgroundColor: 'rgba(13, 110, 253, 0.7)' // azul
+//                         },
+//                         {
+//                             label: 'Meta Batida (%)',
+//                             data: ranking.map(v => v.meta_batida),
+//                             backgroundColor: 'rgba(25, 135, 84, 0.7)' // verde
+//                         },
+//                         {
+//                             label: 'Margem de Lucro (%)',
+//                             data: ranking.map(v => v.margem_lucro),
+//                             backgroundColor: 'rgba(255, 193, 7, 0.7)' // amarelo
+//                         }
+//                     ]
+//                 },
+//                 options: {
+//                     responsive: true,
+//                     plugins: {
+//                         legend: {
+//                             position: 'top'
+//                         },
+//                         title: {
+//                             display: true,
+//                             text: 'Desempenho por Vendedor'
+//                         },
+//                         tooltip: {
+//                             callbacks: {
+//                                 label: function(context) {
+//                                     const label = context.dataset.label || '';
+//                                     const valor = context.parsed.y || 0;
+//                                     return `${label}: ${valor.toFixed(2)}%`;
+//                                 }
+//                             }
+//                         }
+//                     },
+//                     scales: {
+//                         y: {
+//                             beginAtZero: true,
+//                             ticks: {
+//                                 callback: v => v + '%'
+//                             }
+//                         }
+//                     }
+//                 }
+//             });
+//         })
+//         .catch(err => console.error('Erro ao carregar gráfico Desempenho por Vendedor:', err));
+// }

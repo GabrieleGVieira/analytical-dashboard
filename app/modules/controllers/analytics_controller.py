@@ -1,14 +1,16 @@
 import logging
 from flask import request, jsonify
-from app.modules.repositories import SaleRepository, CurrencyRepository
+from app.modules.repositories import SaleRepository, CurrencyRepository, GoalRepository
 from app import db
-from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales, ProfitMargin
+from app.modules.usecases.analytics import SalesCurrencyCorrelation, MultiplePeriodSales, LongTermSales, ProfitMargin, \
+    SellerRanking
 
 logger = logging.getLogger(__name__)
 
 class AnalyticsController:
     def __init__(self):
         self.sale_repo = None
+        self.goal_repo = None
         self.currency_repo = None
         self.use_case = None
         self.session = db.session
@@ -107,4 +109,16 @@ class AnalyticsController:
         except Exception as e:
             logger.exception("Erro ao processar requisição pegar margem de lucris: %s", e)
             return jsonify({"error": str(e)}), 500
+
+    def get_seller_ranking(self):
+        year = int(request.args.get("year", 2024))
+        month = int(request.args.get("month", 11))
+
+        sale_repo = SaleRepository(self.session)
+        goal_repo = GoalRepository(self.session)
+        use_case = SellerRanking(sale_repo, goal_repo)
+
+        ranking = use_case.run(year, month)
+        return jsonify({"ranking": [r.to_dict() for r in ranking]}), 200
+
 
